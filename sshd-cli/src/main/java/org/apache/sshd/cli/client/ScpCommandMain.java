@@ -32,12 +32,14 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import org.apache.sshd.cli.CliSupport;
 import org.apache.sshd.client.scp.ScpClient;
 import org.apache.sshd.client.scp.ScpClient.Option;
 import org.apache.sshd.client.scp.ScpClientCreator;
 import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.kex.extension.parser.NoFlowControl;
 import org.apache.sshd.common.scp.ScpLocation;
 import org.apache.sshd.common.scp.ScpTransferEventListener;
 import org.apache.sshd.common.session.Session;
@@ -166,6 +168,10 @@ public class ScpCommandMain extends SshClientCliSupport {
         try (BufferedReader stdin = new BufferedReader(
                 new InputStreamReader(new NoCloseInputStream(System.in), Charset.defaultCharset()))) {
             args = normalizeCommandArguments(stdout, stderr, args);
+            args = Stream.concat(
+                        GenericUtils.isEmpty(args) ? Stream.empty() : Stream.of(args),
+                        Stream.of("-o", NoFlowControl.NAME + "=" + NoFlowControl.SUPPORTED)
+                    ).toArray(String[]::new);
 
             Level level = Level.SEVERE;
             int numArgs = GenericUtils.length(args);

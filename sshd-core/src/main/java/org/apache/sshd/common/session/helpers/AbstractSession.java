@@ -215,6 +215,8 @@ public abstract class AbstractSession extends SessionHelper {
     private byte[] clientKexData;   // the payload of the client's SSH_MSG_KEXINIT
     private byte[] serverKexData;   // the payload of the server's SSH_MSG_KEXINIT
 
+    private boolean noFlowControl;
+
     /**
      * Create a new session.
      *
@@ -857,7 +859,7 @@ public abstract class AbstractSession extends SessionHelper {
         if (!KexState.DONE.equals(kexState.get())) {
             byte[] bufData = buffer.array();
             int cmd = bufData[buffer.rpos()] & 0xFF;
-            if (cmd > SshConstants.SSH_MSG_KEX_LAST) {
+            if (cmd > SshConstants.SSH_MSG_KEX_LAST || cmd == KexExtensions.SSH_MSG_EXT_INFO) {
                 String cmdName = SshConstants.getCommandMessageName(cmd);
                 boolean debugEnabled = log.isDebugEnabled();
                 synchronized (pendingPackets) {
@@ -2294,6 +2296,23 @@ public abstract class AbstractSession extends SessionHelper {
     protected abstract void receiveKexInit(
         Map<KexProposalOption, String> proposal, byte[] seed)
             throws IOException;
+
+    /**
+     * Activate the no-flow-control KEX extension specified
+     * by https://tools.ietf.org/html/rfc8308#section-3.3
+     */
+    @Override
+    public void activateNoFlowControl() {
+        this.noFlowControl = true;
+    }
+
+    /**
+     * Check if the no-flow-control KEX extension has been activated.
+     */
+    @Override
+    public boolean isNoFlowControl() {
+        return noFlowControl;
+    }
 
     /**
      * Retrieve the SSH session from the I/O session. If the session has not been attached,

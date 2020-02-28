@@ -56,6 +56,7 @@ public class Window extends AbstractLoggingBean implements java.nio.channels.Cha
     private final Object lock;
     private final String suffix;
 
+    private boolean noFlowControl;
     private long size; // the window size
     private long maxSize;   // actually uint32
     private long packetSize;   // actually uint32
@@ -101,6 +102,7 @@ public class Window extends AbstractLoggingBean implements java.nio.channels.Cha
         }
 
         synchronized (lock) {
+            this.noFlowControl = channelInstance.getSession().isNoFlowControl();
             this.maxSize = size;
             this.packetSize = packetSize;
             updateSize(size);
@@ -149,6 +151,11 @@ public class Window extends AbstractLoggingBean implements java.nio.channels.Cha
     public void consume(long len) {
         BufferUtils.validateUint32Value(len, "Invalid consumption length: %d");
         checkInitialized("consume");
+
+        if (noFlowControl) {
+            // flow control is disabled, so just bail out
+            return;
+        }
 
         long remainLen;
         synchronized (lock) {

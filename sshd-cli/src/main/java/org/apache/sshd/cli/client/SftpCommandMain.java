@@ -41,6 +41,7 @@ import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import org.apache.sshd.cli.CliSupport;
 import org.apache.sshd.cli.client.helper.SftpFileTransferProgressOutputStream;
@@ -62,6 +63,7 @@ import org.apache.sshd.common.io.IoServiceFactory;
 import org.apache.sshd.common.io.IoSession;
 import org.apache.sshd.common.kex.KexProposalOption;
 import org.apache.sshd.common.kex.KeyExchange;
+import org.apache.sshd.common.kex.extension.parser.NoFlowControl;
 import org.apache.sshd.common.mac.MacFactory;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.signature.SignatureFactory;
@@ -324,6 +326,10 @@ public class SftpCommandMain extends SshClientCliSupport implements Channel {
             if (logStream != null) {
                 setupLogging(level, stdout, stderr, logStream);
             }
+            args = Stream.concat(
+                    GenericUtils.isEmpty(args) ? Stream.empty() : Stream.of(args),
+                    Stream.of("-o", NoFlowControl.NAME + "=" + NoFlowControl.SUPPORTED)
+            ).toArray(String[]::new);
 
             ClientSession session = (logStream == null)
                 ? null

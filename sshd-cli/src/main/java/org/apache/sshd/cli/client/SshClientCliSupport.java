@@ -77,7 +77,9 @@ import org.apache.sshd.common.config.keys.KeyUtils;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.kex.KexFactoryManager;
 import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
+import org.apache.sshd.common.kex.extension.DefaultKexExtensionHandler;
 import org.apache.sshd.common.kex.extension.KexExtensionHandler;
+import org.apache.sshd.common.kex.extension.parser.NoFlowControl;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.mac.BuiltinMacs;
 import org.apache.sshd.common.mac.Mac;
@@ -561,8 +563,11 @@ public abstract class SshClientCliSupport extends CliSupport {
         }
 
         if ("default".equalsIgnoreCase(kexExtension)) {
-            manager.setKexExtensionHandler(DefaultClientKexExtensionHandler.INSTANCE);
-            stdout.println("Using " + DefaultClientKexExtensionHandler.class.getSimpleName());
+            DefaultKexExtensionHandler handler = new DefaultKexExtensionHandler();
+            String noFlowControl = Objects.toString(options.remove(NoFlowControl.NAME, NoFlowControl.SUPPORTED));
+            handler.addExtension(NoFlowControl.NAME, noFlowControl);
+            manager.setKexExtensionHandler(handler);
+            stdout.println("Using " + DefaultKexExtensionHandler.class.getSimpleName());
         } else {
             ClassLoader cl = ThreadUtils.resolveDefaultClassLoader(KexExtensionHandler.class);
             try {

@@ -38,6 +38,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
@@ -87,6 +88,9 @@ import org.apache.sshd.common.auth.BasicCredentialsImpl;
 import org.apache.sshd.common.auth.BasicCredentialsProvider;
 import org.apache.sshd.common.auth.MutableBasicCredentials;
 import org.apache.sshd.common.io.IoSession;
+import org.apache.sshd.common.kex.extension.DefaultKexExtensionHandler;
+import org.apache.sshd.common.kex.extension.KexExtensions;
+import org.apache.sshd.common.kex.extension.parser.NoFlowControl;
 import org.apache.sshd.common.subsystem.sftp.SftpConstants;
 import org.apache.sshd.common.subsystem.sftp.SftpException;
 import org.apache.sshd.common.util.GenericUtils;
@@ -174,6 +178,9 @@ public class SftpFileSystemProvider extends FileSystemProvider {
         if (client == null) {
             // TODO: make this configurable using system properties
             client = SshClient.setUpDefaultClient();
+            DefaultKexExtensionHandler handler = new DefaultKexExtensionHandler();
+            handler.addExtension(NoFlowControl.NAME, "p");
+            client.setKexExtensionHandler(handler);
             client.start();
         }
         this.clientInstance = client;

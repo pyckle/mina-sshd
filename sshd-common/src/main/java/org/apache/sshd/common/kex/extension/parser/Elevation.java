@@ -31,6 +31,10 @@ import org.apache.sshd.common.util.buffer.Buffer;
 public class Elevation extends AbstractKexExtensionParser<String> {
     public static final String NAME = "elevation";
 
+    public static final String YES = "y";
+    public static final String NO = "n";
+    public static final String DEFAULT = "d";
+
     public static final Elevation INSTANCE = new Elevation();
 
     public Elevation() {
