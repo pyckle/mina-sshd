@@ -12,6 +12,11 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+// This code comes from https://raw.githubusercontent.com/kruton/jbcrypt/37a5a774565b7eaf9e58f0fadba1291a3a06649f/jbcrypt/src/main/java/org/mindrot/jbcrypt/BCrypt.java .
+// It's available on maven as artifact org.connectbot.jbcrypt:jbcrypt:1.0.0. pbkdf method added 2016 by Kenny Root.
+// Modifications for Apache INA sshd: this comment, plus changed the package frm org.mindrot.jbcrypt to avoid conflicts.
+
+// CHECKSTYLE:OFF
 package org.apache.sshd.common.config.keys.loader.openssh.kdf;
 
 import java.io.UnsupportedEncodingException;
@@ -867,3 +872,4 @@ public class BCrypt {
 		return ret == 0;
 	}
 }
+// CHECKSTYLE:ON
