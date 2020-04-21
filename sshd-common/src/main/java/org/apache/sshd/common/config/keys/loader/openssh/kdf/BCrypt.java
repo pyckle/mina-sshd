@@ -12,7 +12,7 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-package org.mindrot.jbcrypt;
+package org.apache.sshd.common.config.keys.loader.openssh.kdf;
 
 import java.io.UnsupportedEncodingException;
 import java.security.DigestException;
