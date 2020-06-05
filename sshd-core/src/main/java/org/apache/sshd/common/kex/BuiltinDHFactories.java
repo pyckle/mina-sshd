@@ -36,6 +36,7 @@ import org.apache.sshd.common.NamedResource;
 import org.apache.sshd.common.cipher.ECCurves;
 import org.apache.sshd.common.config.NamedResourceListParseResult;
 import org.apache.sshd.common.digest.BuiltinDigests;
+import org.apache.sshd.common.kex.curve25519.Curve25519SHA256DH;
 import org.apache.sshd.common.util.GenericUtils;
 import org.apache.sshd.common.util.ValidateUtils;
 import org.apache.sshd.common.util.security.SecurityUtils;
@@ -227,6 +228,15 @@ public enum BuiltinDHFactories implements DHFactory {
         public boolean isSupported() {
             return ECCurves.nistp521.isSupported();
         }
+    },
+    curve25519(Constants.CURVE25519_SHA256) {
+        @Override
+        public AbstractDH create(Object... params) throws Exception {
+            if (!GenericUtils.isEmpty(params)) {
+                throw new IllegalArgumentException("No accepted parameters for " + getName());
+            }
+            return new Curve25519SHA256DH();
+        }
     };
 
     public static final Set<BuiltinDHFactories> VALUES = Collections.unmodifiableSet(EnumSet.allOf(BuiltinDHFactories.class));
@@ -402,6 +412,7 @@ public enum BuiltinDHFactories implements DHFactory {
         public static final String ECDH_SHA2_NISTP256 = "ecdh-sha2-nistp256";
         public static final String ECDH_SHA2_NISTP384 = "ecdh-sha2-nistp384";
         public static final String ECDH_SHA2_NISTP521 = "ecdh-sha2-nistp521";
+        public static final String CURVE25519_SHA256 = "curve25519-sha256";
 
         private Constants() {
             throw new UnsupportedOperationException("No instance allowed");
