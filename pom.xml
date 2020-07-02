@@ -421,6 +421,16 @@
                 <artifactId>tomcat-apr</artifactId>
                 <version>5.5.23</version>
             </dependency>
+            <dependency>
+                <groupId>org.jline</groupId>
+                <artifactId>jline-terminal-jna</artifactId>
+                <version>3.14.1</version>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>5.5.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>net.i2p.crypto</groupId>
@@ -1469,6 +1479,7 @@
         <module>sshd-putty</module>
         <module>sshd-openpgp</module>
         <module>sshd-core</module>
+        <module>sshd-shell-native</module>
         <module>sshd-mina</module>
         <module>sshd-netty</module>
         <module>sshd-scp</module>

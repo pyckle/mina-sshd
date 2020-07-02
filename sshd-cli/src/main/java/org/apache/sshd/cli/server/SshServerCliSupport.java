@@ -65,13 +65,24 @@ import org.apache.sshd.server.shell.ShellFactory;
 import org.apache.sshd.server.subsystem.SubsystemFactory;
 import org.apache.sshd.server.subsystem.sftp.SftpEventListener;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
+import org.apache.sshd.shell.JnaProcessShellFactory;
 
 /**
  * @author <a href="mailto:dev@mina.apache.org">Apache MINA SSHD Project</a>
  */
 public abstract class SshServerCliSupport extends CliSupport {
     public static final String SHELL_FACTORY_OPTION = "ShellFactory";
-    public static final ShellFactory DEFAULT_SHELL_FACTORY = InteractiveProcessShellFactory.INSTANCE;
+    public static final ShellFactory DEFAULT_SHELL_FACTORY;
+
+    static {
+        ShellFactory sf;
+        try {
+            sf = new JnaProcessShellFactory();
+        } catch (NoClassDefFoundError e) {
+            sf = InteractiveProcessShellFactory.INSTANCE;
+        }
+        DEFAULT_SHELL_FACTORY = sf;
+    }
 
     protected SshServerCliSupport() {
         super();
@@ -259,6 +270,10 @@ public abstract class SshServerCliSupport extends CliSupport {
 
         if (PropertyResolverUtils.isNoneValue(factory)) {
             return null;
+        }
+
+        if (JnaProcessShellFactory.JNA_FACTORY_NAME.equalsIgnoreCase(factory)) {
+            return new JnaProcessShellFactory();
         }
 
         if (ScpCommandFactory.SCP_FACTORY_NAME.equalsIgnoreCase(factory)) {

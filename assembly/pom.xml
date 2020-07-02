@@ -135,6 +135,11 @@
             <groupId>tomcat</groupId>
             <artifactId>tomcat-apr</artifactId>
         </dependency>
+            <!-- for native shells -->
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline-terminal-jna</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

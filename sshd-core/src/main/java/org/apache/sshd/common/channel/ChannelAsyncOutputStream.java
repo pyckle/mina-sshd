@@ -65,7 +65,7 @@ public class ChannelAsyncOutputStream extends AbstractCloseable implements IoOut
 
         IoWriteFutureImpl future = new IoWriteFutureImpl(packetWriteId, buffer);
         if (!pendingWrite.compareAndSet(null, future)) {
-            throw new WritePendingException("No write pending future");
+            throw new WritePendingException("A write operation is already pending");
         }
         doWriteIfPossible(false);
         return future;
