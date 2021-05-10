@@ -56,6 +56,9 @@ import org.slf4j.LoggerFactory;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ProxyTest extends BaseTestSupport {
+
+    private static final String GREETINGS = "Hello";
+
     private SshServer sshd;
     private int sshPort;
     private int echoPort;
@@ -148,6 +151,14 @@ public class ProxyTest extends BaseTestSupport {
 
         NioSocketAcceptor acceptor = new NioSocketAcceptor();
         acceptor.setHandler(new IoHandlerAdapter() {
+            @Override
+            public void sessionOpened(IoSession session) throws Exception {
+                IoBuffer sent = IoBuffer.allocate(32);
+                sent.put(GREETINGS.getBytes());
+                sent.flip();
+                session.write(sent);
+            }
+
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
                 IoBuffer recv = (IoBuffer) message;
@@ -277,10 +288,14 @@ public class ProxyTest extends BaseTestSupport {
                         try (OutputStream sockOut = s.getOutputStream();
                              InputStream sockIn = s.getInputStream()) {
 
+                            int l = sockIn.read(buf);
+                            assertEquals("Mismatched data at iteration " + i, GREETINGS,
+                                    new String(buf, 0, l, StandardCharsets.UTF_8));
+
                             sockOut.write(bytes);
                             sockOut.flush();
 
-                            int l = sockIn.read(buf);
+                            l = sockIn.read(buf);
                             assertEquals("Mismatched data at iteration " + i, expected,
                                     new String(buf, 0, l, StandardCharsets.UTF_8));
                         }

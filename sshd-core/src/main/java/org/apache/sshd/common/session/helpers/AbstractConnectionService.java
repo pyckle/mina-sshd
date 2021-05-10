@@ -783,6 +783,11 @@ public abstract class AbstractConnectionService
                     buf.putInt(channelId); // local (client side) identifier
                     buf.putInt(window.getSize());
                     buf.putInt(window.getPacketSize());
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     session.writePacket(buf);
                 } else {
                     int reasonCode = 0;
